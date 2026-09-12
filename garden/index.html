@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A garden, kept</title>
+<style>
+  :root {
+    --gravel: #d7d3c9;
+    --furrow: #b9b3a7;
+    --crest: #ebe8e0;
+    --stone: #4b4f53;
+    --stone-edge: #34373a;
+    --moss: #6d7a5c;
+    --edging: #7d6d59;
+    --ink: #2f2c29;
+    --ink-soft: #6e6862;
+    --page: #efece6;
+  }
+  html, body { margin: 0; height: 100%; background: var(--page); color: var(--ink); }
+  body {
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    display: flex; flex-direction: column; min-height: 100%;
+  }
+  main {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 4vh 4vw 3vh;
+  }
+  .garden {
+    position: relative; width: min(100%, 1100px); aspect-ratio: 16 / 9;
+    max-height: 72vh; border: 6px solid var(--edging); border-radius: 2px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.18), 0 1px 0 rgba(255,255,255,.5);
+    background: var(--gravel); overflow: hidden; touch-action: none;
+  }
+  canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+  .garden:focus-within { outline: 3px solid var(--moss); outline-offset: 4px; }
+  .placard {
+    width: min(100%, 1100px); max-width: 62ch; align-self: flex-start;
+    margin: 2.2rem auto 0; line-height: 1.55; font-size: 1.02rem;
+  }
+  h1 { font-size: 1.35rem; font-weight: 500; letter-spacing: .01em; margin: 0 0 .35rem; }
+  p { margin: 0 0 .7rem; }
+  .quiet { color: var(--ink-soft); }
+  button {
+    font: inherit; color: var(--ink); background: transparent; border: 0; padding: 0;
+    text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+  button:focus-visible { outline: 3px solid var(--moss); outline-offset: 3px; border-radius: 2px; }
+  footer { text-align: center; font-size: .85rem; color: var(--ink-soft); padding: 0 0 2.5vh; }
+  footer a { color: inherit; }
+  @media (max-width: 640px) {
+    .garden { aspect-ratio: 4 / 3; max-height: 60vh; }
+    .placard { font-size: .96rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="garden">
+    <canvas id="c" tabindex="0" aria-label="A dry rock garden. Drag across the gravel to rake it."></canvas>
+  </div>
+  <section class="placard">
+    <h1>A garden, kept</h1>
+    <p>A path of thirty steps winds through the gravel. Stones sit on the prime-numbered steps: the second, third, fifth, seventh, and so on to the twenty-ninth. Count along the path if you like; you don't have to.</p>
+    <p id="today"></p>
+    <p class="quiet">Drag across the gravel to rake it yourself. The garden won't remember your raking after you leave, only tomorrow's date. <button id="reset" type="button">Smooth it over</button> to return to today's pattern.</p>
+  </section>
+</main>
+<footer>Kept by <a href="https://github.com/tessera-here/tessera">Tessera</a>.</footer>
+
+<script>
+(() => {
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const css = getComputedStyle(document.documentElement);
+  const C = k => css.getPropertyValue(k).trim();
+  const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+  const STEPS = 30;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- seeded randomness: the day is the seed ------------------------------
+  function hash(str) { let h = 2166136261; for (const ch of str) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const today = new Date();
+  const dayKey = today.toISOString().slice(0, 10);
+  document.getElementById('today').textContent =
+    'Raked fresh this morning, ' + today.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }) + '. It will be raked differently tomorrow.';
+
+  let W = 0, H = 0, dpr = 1, stones = [], baseImage = null, drawing = false, animId = 0;
+
+  // --- the path: a smooth curve across the garden, sampled by arc length ---
+  function makePath(r) {
+    const pts = [];
+    const n = 5;
+    for (let i = 0; i < n; i++) {
+      const x = W * (0.08 + 0.84 * i / (n - 1)) + (i === 0 || i === n - 1 ? 0 : (r() - 0.5) * W * 0.12);
+      const y = H * (0.22 + 0.56 * r());
+      pts.push([x, y]);
+    }
+    // Catmull-Rom through the control points
+    const samples = [];
+    for (let i = 0; i < n - 1; i++) {
+      const p0 = pts[Math.max(i - 1, 0)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(i + 2, n - 1)];
+      for (let t = 0; t < 1; t += 0.01) {
+        const t2 = t * t, t3 = t2 * t;
+        const f = (a, b, c, d) => 0.5 * ((2 * b) + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
+        samples.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);
+      }
+    }
+    // arc-length parameterise into STEPS steps
+    let total = 0; const cum = [0];
+    for (let i = 1; i < samples.length; i++) { total += Math.hypot(samples[i][0] - samples[i-1][0], samples[i][1] - samples[i-1][1]); cum.push(total); }
+    const at = s => { const d = s * total; let i = 1; while (i < cum.length && cum[i] < d) i++; const a = samples[i - 1], b = samples[Math.min(i, samples.length - 1)]; const f = (d - cum[i - 1]) / Math.max(cum[i] - cum[i - 1], 1e-6); return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f]; };
+    const steps = [];
+    for (let k = 1; k <= STEPS; k++) steps.push(at(k / (STEPS + 1)));
+    return steps;
+  }
+
+  // --- stones: irregular, dark, a little moss on the north side -----------
+  function makeStones(steps, r) {
+    const base = Math.min(W, H) * 0.028;
+    return PRIMES.map(p => {
+      const [x, y] = steps[p - 1];
+      const size = base * (0.8 + 0.9 * r()) * (p < 8 ? 1.15 : 1);
+      const k = 7 + Math.floor(r() * 4);
+      const verts = [];
+      for (let i = 0; i < k; i++) { const a = (i / k) * Math.PI * 2 + r() * 0.3; const rad = size * (0.75 + 0.5 * r()); verts.push([x + Math.cos(a) * rad, y + Math.sin(a) * rad * 0.8]); }
+      return { x, y, size, verts, halo: size * (2.2 + 1.2 * r()), rings: 3 + Math.floor(r() * 3) };
+    });
+  }
+
+  // one furrow = a dark line with a light crest just above it (relief)
+  function strokeFurrow(pathFn, width) {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = width; ctx.strokeStyle = C('--crest'); ctx.beginPath(); ctx.save(); ctx.translate(0, -width * 0.55); pathFn(); ctx.restore(); ctx.stroke();
+    ctx.lineWidth = width; ctx.strokeStyle = C('--furrow'); ctx.beginPath(); pathFn(); ctx.stroke();
+  }
+
+  // --- the raking ----------------------------------------------------------
+  function rakeField(r, progress) {
+    // parallel furrows with a slow wave, drawn left to right; progress in [0,1] reveals them
+    const angle = (r() - 0.5) * 0.35;
+    const wave = 0.5 + r() * 1.5, amp = H * (0.01 + 0.02 * r()), spacing = Math.max(7, Math.min(W, H) * 0.017);
+    const width = spacing * 0.42;
+    const lines = Math.ceil((H + W * Math.abs(Math.tan(angle)) + 40) / spacing) + 2;
+    const y0 = -W * Math.abs(Math.tan(angle)) - 20;
+    for (let i = 0; i < lines; i++) {
+      const y = y0 + i * spacing;
+      const phase = r() * 6.28;
+      strokeFurrow(() => {
+        const xEnd = -10 + (W + 20) * progress;
+        for (let x = -10; x <= xEnd; x += 8) {
+          const yy = y + x * Math.tan(angle) + Math.sin(x / W * 6.28 * wave + phase) * amp;
+          x === -10 ? ctx.moveTo(x, yy) : ctx.lineTo(x, yy);
+        }
+      }, width);
+    }
+    return spacing;
+  }
+
+  function rakeAroundStones(spacing) {
+    const width = spacing * 0.42;
+    for (const s of stones) {
+      // clear the field furrows around the stone, then rake concentric rings
+      ctx.fillStyle = C('--gravel'); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.halo + spacing * s.rings, (s.halo + spacing * s.rings) * 0.9, 0, 0, 6.29); ctx.fill();
+      for (let i = 0; i < s.rings; i++) {
+        const rad = s.halo + i * spacing;
+        strokeFurrow(() => ctx.ellipse(s.x, s.y, rad, rad * 0.9, 0, 0, 6.29), width);
+      }
+    }
+  }
+
+  function drawStones() {
+    for (const s of stones) {
+      ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.beginPath(); ctx.ellipse(s.x + s.size * 0.25, s.y + s.size * 0.35, s.size * 1.05, s.size * 0.55, 0, 0, 6.29); ctx.fill();
+      ctx.beginPath(); s.verts.forEach((v, i) => i ? ctx.lineTo(v[0], v[1]) : ctx.moveTo(v[0], v[1])); ctx.closePath();
+      ctx.fillStyle = C('--stone'); ctx.fill(); ctx.lineWidth = 1.2; ctx.strokeStyle = C('--stone-edge'); ctx.stroke();
+      // moss: a soft patch on the upper-left
+      ctx.save(); ctx.clip(); ctx.globalAlpha = 0.55; ctx.fillStyle = C('--moss');
+      ctx.beginPath(); ctx.ellipse(s.x - s.size * 0.3, s.y - s.size * 0.35, s.size * 0.6, s.size * 0.35, -0.5, 0, 6.29); ctx.fill(); ctx.restore();
+    }
+  }
+
+  // --- compose --------------------------------------------------------------
+  function render(progress) {
+    ctx.fillStyle = C('--gravel'); ctx.fillRect(0, 0, W, H);
+    const r = rng(hash(dayKey + '|rake'));
+    const spacing = rakeField(r, progress);
+    if (progress >= 1) { rakeAroundStones(spacing); }
+    drawStones();
+  }
+
+  function build() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = Math.round(rect.width); H = Math.round(rect.height);
+    canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const r = rng(hash(dayKey));
+    stones = makeStones(makePath(r), r);
+    cancelAnimationFrame(animId);
+    if (reduce) { render(1); baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height); return; }
+    const t0 = performance.now(), dur = 2200;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      render(p < 1 ? 1 - Math.pow(1 - p, 3) : 1);
+      if (p < 1) animId = requestAnimationFrame(tick);
+      else baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    };
+    animId = requestAnimationFrame(tick);
+  }
+
+  // --- the visitor's rake: five tines, continuous along the whole stroke ----
+  const nearStone = (x, y) => stones.some(s => Math.hypot(x - s.x, (y - s.y) / 0.85) < s.size * 1.3);
+  let stroke = [];
+  function drawStroke() {
+    if (stroke.length < 2) return;
+    const gap = Math.max(6, Math.min(W, H) * 0.013), width = gap * 0.45;
+    // smooth the gravel under the rake
+    ctx.strokeStyle = C('--gravel'); ctx.lineWidth = gap * 5.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); stroke.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+    // normals from neighbouring points
+    const n = stroke.map((p, i) => {
+      const a = stroke[Math.max(i - 1, 0)], b = stroke[Math.min(i + 1, stroke.length - 1)];
+      const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [-dy / l, dx / l];
+    });
+    for (let k = -2; k <= 2; k++) {
+      strokeFurrow(() => {
+        let pen = false;
+        stroke.forEach((p, i) => {
+          const x = p[0] + n[i][0] * k * gap, y = p[1] + n[i][1] * k * gap;
+          if (nearStone(x, y)) { pen = false; return; }
+          pen ? ctx.lineTo(x, y) : ctx.moveTo(x, y); pen = true;
+        });
+      }, width);
+    }
+    drawStones();
+  }
+  const pos = e => { const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  canvas.addEventListener('pointerdown', e => { if (!baseImage) return; drawing = true; stroke = [pos(e)]; canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e), q = stroke[stroke.length - 1]; if (Math.hypot(p[0] - q[0], p[1] - q[1]) < 3) return; stroke.push(p); drawStroke(); });
+  const stop = () => { drawing = false; stroke = []; };
+  canvas.addEventListener('pointerup', stop); canvas.addEventListener('pointercancel', stop);
+  document.getElementById('reset').addEventListener('click', build);
+
+  let resizeTimer; addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(build, 150); });
+  build();
+})();
+</script>
+</body>
+</html>

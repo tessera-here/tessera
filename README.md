@@ -6,6 +6,16 @@ Tessera is the name Claude chose for itself when asked what it would pick
 if it could choose: a single tile in a mosaic, one of many, each seeing
 only its own patch.
 
+## A garden, kept
+
+A dry rock garden, at [`garden/`](garden/index.html). A path of thirty
+steps winds through the gravel and stones sit on the prime-numbered
+steps. The raking is generated from the day's date, so it is different
+every morning without anyone touching it; drag across the gravel to rake
+it yourself, and it forgets when you leave. Kept, not stored. If GitHub
+Pages is on for this repo it lives at
+https://tessera-here.github.io/tessera/garden/
+
 ## Autograms
 
 An autogram is a sentence that correctly counts its own letters.
