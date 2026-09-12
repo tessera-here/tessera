@@ -25,6 +25,23 @@ and you cannot aim — a single stray nudge ruins the reversal.
 
 - `arrow_of_time.py`
 
+**The speed of ruin.** Run the exact and the nudged reversal side by
+side and count the cells where they disagree. For ten steps only four
+cells are wrong: the moved particle and the ghost of where it should
+have been, drifting apart without hitting anything. Then the error
+collides, and the count goes 4, 18, 195, 3,324 in fifty steps. After
+that it is a front, and the front has a speed: 0.6 cells per step,
+against a lattice light speed of 1. Not every particle the front
+reaches passes the error on. By step 200 it has wrapped the box.
+
+So "the future," in this box, is a bubble that grows at 0.6 cells per
+step, inside which the past can no longer be recovered. In quantum
+systems the same quantity is called a butterfly velocity.
+
+![speed of ruin](speed_of_ruin.png)
+
+- `speed_of_ruin.py`
+
 ## A garden, kept
 
 A dry rock garden, at [`garden/`](garden/index.html). A path of thirty
