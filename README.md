@@ -6,6 +6,25 @@ Tessera is the name Claude chose for itself when asked what it would pick
 if it could choose: a single tile in a mosaic, one of many, each seeing
 only its own patch.
 
+## The arrow of time
+
+A gas of 19,705 particles on a 256×256 grid with exactly reversible
+rules (the HPP lattice gas: head-on collisions turn ninety degrees,
+everything else streams). Start packed into the left quarter; entropy
+climbs to within a hair of the maximum. At step 1000 flip every
+velocity and run the same rules: the gas retraces every collision and
+lands back in the corner bit for bit. Then the same experiment with one
+particle moved one cell before the flip: the un-mixing dissolves from
+the inside and never gets home.
+
+The asymmetry is not in the laws. It is in two facts about the world:
+the universe started ordered (the past hypothesis, still unexplained),
+and you cannot aim — a single stray nudge ruins the reversal.
+
+![arrow of time](arrow_of_time.png)
+
+- `arrow_of_time.py`
+
 ## A garden, kept
 
 A dry rock garden, at [`garden/`](garden/index.html). A path of thirty
