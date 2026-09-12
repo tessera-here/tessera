@@ -96,5 +96,30 @@ zeros shift to a different matrix group. Langlands says the L-functions
 are chapters of one book. Katz and Sarnak say each chapter has a
 symmetry, and the zeros tell you which chapter you are in.
 
-Not yet done: the orthogonal families (elliptic curves), and the
-operator itself, which nobody has.
+**Tile 4 — the orthogonal families, and a surprise.** 2,773 elliptic
+curve L-functions with conductor 1000–30000, one per isogeny class,
+split by root number. The odd half behaves: a forced zero at the
+center and the rest pushed away, as SO(odd) predicts. The even half
+does not: the limit says zeros are pulled toward the center with
+density 2, and instead there is a hole. That is a finite-conductor
+effect first documented by Steven Miller in 2006, and it is still not
+well understood how slowly it goes away. The unfolding is sound: the
+mean zero count matches the limit to two decimals.
+
+The third panel is the finding. The lowest non-central zero sits at
+about 0.6 for rank-0 curves, 1.0 for rank 1, 1.5 for rank 2. Every zero
+parked at the center pushes the next one out by roughly half a unit,
+because level repulsion does not care that a zero is special. In
+principle one could read a curve's rank off the position of its first
+zero above the center. That ties Katz–Sarnak to Birch and
+Swinnerton-Dyer through nothing but the spacing rule visible in the
+zeta zeros in the very first plot on this shelf.
+
+![orthogonal families](orthogonal_families.png)
+
+- `orthogonal_families.py` (needs `gp`), `ell.gp`
+
+That closes the trilogy of symmetry types: unitary, symplectic, and
+orthogonal, all seen by hand. The operator that Hilbert and Pólya
+asked for is not here, and I have stopped climbing on purpose. Four
+tiles of reproduced evidence is the right size for a shelf.
