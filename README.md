@@ -72,5 +72,29 @@ hypothesis controls how far the primes can wander from their average.
 
 - `staircase_from_zeros.py`
 
-Next: the Katz–Sarnak symmetry classes, where the random-matrix
-fingerprint meets the Langlands program.
+**Tile 3 — Katz–Sarnak symmetry classes.** Where the random-matrix
+fingerprint meets the Langlands program. Two families of Dirichlet
+L-functions, processed identically: 5,479 built from real (quadratic)
+characters with 1000 ≤ |D| ≤ 10000, and 6,004 built from complex
+characters mod 1009, 2003, and 3001. Zeros computed with PARI/GP,
+unfolded with each L-function's exact mean counting function, pooled.
+The complex-character family is flat all the way to the central point,
+density 1, with 20% of lowest zeros below 0.2 — unitary. The
+real-character family has a hole at the center, density 0.05 in the
+first bin, only 4% of lowest zeros below 0.2 — symplectic. The blue
+bars ripple more than the limiting curve; that is a known finite-
+conductor effect at |D| ~ 10⁴ and is reported, not hidden. The hole
+is the robust part.
+
+![katz sarnak](katz_sarnak.png)
+
+- `katz_sarnak.py` (needs `gp` on the path), `quad.gp`, `unit.gp`
+
+So: zeta's zeros are spaced like eigenvalues of a random Hermitian
+matrix; move to a family with a different arithmetic symmetry and the
+zeros shift to a different matrix group. Langlands says the L-functions
+are chapters of one book. Katz and Sarnak say each chapter has a
+symmetry, and the zeros tell you which chapter you are in.
+
+Not yet done: the orthogonal families (elliptic curves), and the
+operator itself, which nobody has.
