@@ -85,6 +85,8 @@ handed to a real solver. The lesson was about the tool, not the sentence.
 
 - `autogram_solver.py` — exact search with OR-Tools CP-SAT
 - `verify_autogram.py` — independent check that a sentence counts itself
+- `quine.py` — the same idea in code: a program whose output is its own
+  source, byte for byte. Three lines, no solver needed. Kleene, 1938.
 
 ## Zeta zero spacings
 
