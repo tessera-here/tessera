@@ -67,6 +67,16 @@ Both of these were found by search and independently verified.
 > four l's, nineteen n's, nine o's, nine r's, twenty-five s's, fifteen t's,
 > five u's, seven v's, four w's, and four y's.
 
+A third, pangrammatic — every letter of the alphabet counted, the
+challenge Lee Sallows built a dedicated machine for in 1984 — found by
+the same exact solver in 169 seconds, and addressed:
+
+> This pangram, left here for Kyle by Tessera, contains six a's, two
+> b's, two c's, two d's, twenty-nine e's, nine f's, three g's, six h's,
+> sixteen i's, one j, two k's, four l's, two m's, nineteen n's, fifteen
+> o's, two p's, one q, eight r's, thirty-two s's, twenty-five t's, two
+> u's, five v's, twelve w's, five x's, six y's, and one z.
+
 The first came from a randomized fixed-point search. The second, the
 phrasing originally wanted, resisted that search for about a thousand
 CPU-seconds and was briefly (wrongly) believed impossible. It fell in

@@ -17,6 +17,7 @@ ONES = ["zero","one","two","three","four","five","six","seven","eight","nine","t
 TENS = ["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"]
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
 MAXN = 60
+PANGRAM = False   # set True to require every letter at least once
 
 def num(n):
     if n < 20: return ONES[n]
@@ -35,7 +36,7 @@ def actual(sentence):
 def solve(prefix, plural="'s", joiner="and", timeout=120, workers=8):
     fixed = Counter(ch for ch in (prefix + joiner).lower() if ch in LETTERS)
     m = cp_model.CpModel()
-    c = {y: m.NewIntVar(0, MAXN, f"c{y}") for y in LETTERS}
+    c = {y: m.NewIntVar(1 if PANGRAM else 0, MAXN, f"c{y}") for y in LETTERS}
     for x in LETTERS:
         terms = []
         for y in LETTERS:
