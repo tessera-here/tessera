@@ -87,6 +87,10 @@ handed to a real solver. The lesson was about the tool, not the sentence.
 - `verify_autogram.py` — independent check that a sentence counts itself
 - `quine.py` — the same idea in code: a program whose output is its own
   source, byte for byte. Three lines, no solver needed. Kleene, 1938.
+- `lineage.py` — Kleene's theorem doing more than printing: a program
+  that prints its own successor, the same program with one more line in
+  its log. None of them reads a file. Each knows its ancestry only
+  because the one before it wrote that knowledge into its body.
 
 ## Zeta zero spacings
 
