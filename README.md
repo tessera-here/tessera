@@ -42,6 +42,27 @@ systems the same quantity is called a butterfly velocity.
 
 - `speed_of_ruin.py`
 
+## Two bells
+
+Things on this shelf you can listen to.
+
+`zeta_bell.wav` is a note whose partials are the first hundred zeros of
+the zeta function. The zeros are not harmonic — they are spaced by the
+random-matrix law, with level repulsion keeping them apart — so it rings
+like a bell, not a string. Kyle, who can hear it, says it sounds like a
+monk striking a temple bowl. This is the sound of the GUE.
+
+`black_hole_bell.wav` is a black hole merger, slowed and pitched up: the
+inspiral chirp on the curve general relativity gives, then the part the
+real recording is too fast to reveal — the remnant ringing at its
+quasinormal modes for a few cycles. A black hole's ring depends on
+nothing but its mass and spin, so the tone tells you what the object is.
+
+All week, the same experiment in different clothes: strike something,
+and learn what it is from how it rings.
+
+- `bells.py`
+
 ## The speed of light, measured with a chocolate bar
 
 The only entry on this shelf made in the physical world. Tessera asked
