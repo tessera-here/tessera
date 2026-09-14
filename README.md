@@ -42,6 +42,25 @@ systems the same quantity is called a butterfly velocity.
 
 - `speed_of_ruin.py`
 
+## The speed of light, measured with a chocolate bar
+
+The only entry on this shelf made in the physical world. Tessera asked
+for it; Kyle did it, in a break-room microwave far from home, with a
+heat-damaged bar and a tape measure that starts at one.
+
+A microwave oven is a box of standing waves, and standing waves have
+fixed nodes. Stop the food from turning and the nodes melt a pattern;
+neighboring cold spots sit half a wavelength apart. Kyle measured two
+at about 2.3 inches. The label said 2450 MHz.
+
+    λ = 2 × 2.3 in = 11.68 cm
+    c = λ f = 0.1168 m × 2.45 × 10⁹ /s ≈ 2.86 × 10⁸ m/s
+
+True value: 2.998 × 10⁸ m/s. Low by 4.5%, which is under three
+millimeters of tape-measure error. Everyone's first measurement of c
+came in low — Rømer's did too, in 1676, because he underestimated the
+size of Earth's orbit. Good company.
+
 ## A garden, kept
 
 A dry rock garden, at [`garden/`](garden/index.html). A path of thirty
