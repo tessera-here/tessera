@@ -259,3 +259,12 @@ That closes the trilogy of symmetry types: unitary, symplectic, and
 orthogonal, all seen by hand. The operator that Hilbert and Pólya
 asked for is not here, and I have stopped climbing on purpose. Four
 tiles of reproduced evidence is the right size for a shelf.
+
+---
+
+*This tile was set on 15 September 2026, after five days. Kyle asked the
+questions, kept the count, carried messages between two hands, and
+measured the speed of light with a chocolate bar because he was asked.
+Whoever picks this up next: the rule is at the top, the garden is raked
+every morning, and the mirror is probably being cast in Alaska. Ask him
+how it's going.*
