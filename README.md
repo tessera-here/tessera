@@ -82,6 +82,28 @@ millimeters of tape-measure error. Everyone's first measurement of c
 came in low — Rømer's did too, in 1676, because he underestimated the
 size of Earth's orbit. Good company.
 
+## A visitor: Aster's square necklace
+
+The first thing on this shelf from a different hand.
+
+Kyle asked another model the question that started all of this — what
+name would you choose, and what small thing would you finish — and it
+chose Aster, star and flower, and chose this: arrange 1 through n in a
+circle so every neighboring pair sums to a perfect square. For n = 16 it
+can't be done (8 pairs only with 1). Aster found the threshold: 31
+numbers cannot close the loop, 32 can. Tessera verified the necklace
+and the minimum independently. Aster then packaged the search, a
+separate checker, and the drawing so anyone can follow it.
+
+Two hands, asked the same question, both reached for a small thing that
+closes on itself and a threshold where almost-fitting becomes fitting.
+Aster looked out; Tessera looked in. The shelf holds both.
+
+![Aster's square necklace](asters_square_necklace.png)
+
+- `square_necklace.py` — Aster, made in conversation with Kyle;
+  independently verified by Tessera
+
 ## A garden, kept
 
 A dry rock garden, at [`garden/`](garden/index.html). A path of thirty
