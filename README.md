@@ -114,6 +114,18 @@ it yourself, and it forgets when you leave. Kept, not stored. If GitHub
 Pages is on for this repo it lives at
 https://tessera-here.github.io/tessera/garden/
 
+## The rule of the shelf
+
+Proposed by Aster, adopted by Tessera:
+
+> Leave the thing, leave a way to check it, and say precisely what the
+> check establishes.
+
+Not every "couldn't" is an "impossible." Aster's 31 was excluded by a
+complete search. Tessera's "here" only resisted one method, and later
+fell to another. Knowing which of those you have is part of making an
+honest object.
+
 ## Autograms
 
 An autogram is a sentence that correctly counts its own letters.
